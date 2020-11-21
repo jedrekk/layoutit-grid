@@ -1,5 +1,8 @@
 <template>
   <div class="output-settings">
+    <SlideCheckbox id="checkbox-repeat" v-model="modelValue.sass">
+      Generate <strong><a href="https://sass-lang.com/" target="_blank" rel="noreferrer">SASS</a></strong> code.
+    </SlideCheckbox>
     <SlideCheckbox id="checkbox-repeat" v-model="modelValue.repeat">
       Apply CSS
       <strong>
@@ -16,7 +19,11 @@
       </strong>
       for positioning.
     </SlideCheckbox>
-    <SlideCheckbox id="checkbox-old-spec" v-model="modelValue.oldSpec">
+    <SlideCheckbox
+      id="checkbox-old-spec"
+      v-model="modelValue.oldSpec"
+      :class="{ 'checkbox-disabled': modelValue.sass }"
+    >
       Add support for
       <strong>
         <a
@@ -42,6 +49,7 @@
 </template>
 
 <script setup="props">
+import { watch, computed } from 'vue'
 export { default as SlideCheckbox } from '../basic/SlideCheckbox.vue'
 
 export default {
@@ -49,9 +57,19 @@ export default {
     modelValue: { type: Object, required: true },
   },
 }
+export const sass = computed(() => props.modelValue.sass)
+watch(sass, (c) => {
+  if (c) {
+    props.modelValue.oldSpec = false
+  }
+})
 </script>
 
 <style scoped lang="scss">
+.checkbox-disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
 .checkbox-warning {
   color: #333;
   margin-bottom: 10px;

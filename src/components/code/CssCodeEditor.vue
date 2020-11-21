@@ -1,5 +1,5 @@
 <template>
-  <CodeEditor type="css" :code="code"
+  <CodeEditor :type="languageName" :code="code"
     ><CssCodeArea :area="area" :options="options" /><template v-if="options.oldSpec"
       >{{ '\n\n@media all and (-ms-high-contrast:none) {\n\n' }}<CssCodeAreaOldSpec :area="area" :options="options" />{{
         '\n\n}'
@@ -8,7 +8,8 @@
   >
 </template>
 
-<script setup>
+<script setup="props">
+import { computed } from 'vue'
 export { default as CodeEditor } from './CodeEditor.vue'
 export { default as CssCodeArea } from './CssCodeArea.vue'
 export { default as CssCodeAreaOldSpec } from './CssCodeAreaOldSpec.vue'
@@ -20,6 +21,7 @@ export default {
     code: { type: String, required: true },
   },
 }
+export const languageName = computed(() => (props.options.sass ? 'sass' : 'css'))
 </script>
 
 <style scoped>

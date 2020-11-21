@@ -29,6 +29,32 @@ export function areaToCSS(area, { parentGrid, useTemplateAreas = true, validTemp
   return css
 }
 
+export function areaToSASS(area, { parentGrid, useTemplateAreas = true, validTemplateAreas = true, repeat, oldSpec }) {
+  const { name, grid } = area
+  const singleLine = grid == null
+  const cssName = toCssName(name)
+  let css = `.${cssName}\n  ${singleLine ? '' : '\n'}`
+  if (grid) {
+    css += gridToSASS(name, grid, { useTemplateAreas, repeat })
+  }
+
+  const gridArea = getGridArea(area, parentGrid)
+  if (gridArea) {
+    css += `${singleLine ? ' ' : '\n  '}grid-area: ${useTemplateAreas && validTemplateAreas ? cssName : gridArea}`
+  }
+  css += `${singleLine ? ' ' : '\n'}\n`
+
+  if (grid) {
+    const validTemplateAreas = gridTemplateAreas(grid) !== undefined
+    grid.areas.forEach((area) => {
+      css += '\n' + areaToSASS(area, { parentGrid: grid, useTemplateAreas, validTemplateAreas, repeat })
+    })
+  }
+  console.log('areaToSASS')
+  console.log(css)
+  return css
+}
+
 export function gridToCSS(name, grid, { useTemplateAreas = true, repeat }) {
   let css = `  display: grid;
   grid-template-columns: ${namedTemplateColumns(grid, repeat)};
@@ -39,6 +65,21 @@ export function gridToCSS(name, grid, { useTemplateAreas = true, repeat }) {
     const templateAreas = gridTemplateAreas(grid, '\n    ')
     if (templateAreas) {
       css += `\n  grid-template-areas:\n    ${templateAreas};`
+    }
+  }
+  return css
+}
+
+export function gridToSASS(name, grid, { useTemplateAreas = true, repeat }) {
+  let css = `  display: grid
+  grid-template-columns: ${namedTemplateColumns(grid, repeat)}
+  grid-template-rows: ${namedTemplateRows(grid, repeat)}
+  gap: ${grid.row.gap} ${grid.col.gap}` // TODO: cssGridGap(grid)
+
+  if (useTemplateAreas) {
+    const templateAreas = gridTemplateAreas(grid, ' ')
+    if (templateAreas) {
+      css += `\n  grid-template-areas: ${templateAreas}`
     }
   }
   return css

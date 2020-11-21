@@ -44,7 +44,7 @@ import { ref, computed } from 'vue'
 
 export { restart } from '../../store.js'
 
-import { areaToCSS, areaToHTML } from '../../generateCode.js'
+import { areaToSASS, areaToCSS, areaToHTML } from '../../generateCode.js'
 
 export { undo, redo, undoStack, redoStack, mainArea } from '../../store.js'
 
@@ -56,13 +56,18 @@ export default {
 }
 
 export const options = ref({
+  sass: false,
   templateAreas: true,
   oldSpec: false,
   repeat: false,
 })
 
 export const cssCode = computed(() => {
-  const { repeat, templateAreas, oldSpec } = options.value
+  const { sass, repeat, templateAreas, oldSpec } = options.value
+  console.log(options.value)
+  if (sass) {
+    return areaToSASS(props.area, { useTemplateAreas: templateAreas, repeat, oldSpec })
+  }
   return areaToCSS(props.area, { useTemplateAreas: templateAreas, repeat, oldSpec })
 })
 

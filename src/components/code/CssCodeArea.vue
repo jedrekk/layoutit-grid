@@ -1,22 +1,23 @@
 <template>
-  <span class="token selector">.<CssCodeAreaName :area="area" /></span><span> {</span>{{ area.grid ? '\n  ' : ' '
+  <span class="token selector">.<CssCodeAreaName :area="area" /></span><span> {{ openCurl }}</span
+  >{{ area.grid || options.sass ? '\n  ' : ' '
   }}<template v-if="area.grid"
-    ><span class="token property">display</span>: <span class="token string">grid</span>;{{ '\n  '
+    ><span class="token property">display</span>: <span class="token string">grid</span>{{ lineEnd }}{{ '\n  '
     }}<span class="token property">grid-template-columns</span>:
-    <CssCodeTemplateTracks :grid="area.grid" type="col" :repeat="options.repeat" />;{{ '\n  '
+    <CssCodeTemplateTracks :grid="area.grid" type="col" :repeat="options.repeat" />{{ lineEnd }}{{ '\n  '
     }}<span class="token property">grid-template-rows</span>:
-    <CssCodeTemplateTracks :grid="area.grid" type="row" :repeat="options.repeat" />;{{ '\n  '
+    <CssCodeTemplateTracks :grid="area.grid" type="row" :repeat="options.repeat" />{{ lineEnd }}{{ '\n  '
     }}<span class="token property">gap</span>:
     <span class="token string"
       ><CssCodeGap :grid="area.grid" type="row" /> <CssCodeGap :grid="area.grid" type="col" /></span
-    >;</template
+    >{{ lineEnd }}</template
   ><span v-if="includeTemplateAreas"
-    >{{ '\n  ' }}<span class="token property">grid-template-areas</span>:{{ '\n    '
-    }}<CssCodeTemplateAreas :area="area" :options="options" />;</span
+    >{{ '\n  ' }}<span class="token property">grid-template-areas</span>:{{ options.sass ? ' ' : '\n    '
+    }}<CssCodeTemplateAreas :area="area" :options="options" />{{ lineEnd }}</span
   ><template v-if="gridArea"
     >{{ area.grid ? '\n  ' : '' }}<span class="token property">grid-area</span>:
     <CssCodeGridArea :area="area" :options="options" /></template
-  >{{ (area.grid ? '\n' : ' ') + '}'
+  >{{ (area.grid ? '\n' : ' ') + closeCurl
   }}<template v-for="(a, i) in gridAreas" :key="i">{{ '\n' }}<CssCodeArea :area="a" :options="options" /></template>
 </template>
 
@@ -38,6 +39,9 @@ export default {
   },
 }
 
+export const lineEnd = computed(() => (props.options.sass ? '' : ';'))
+export const openCurl = computed(() => (props.options.sass ? '' : '{'))
+export const closeCurl = computed(() => (props.options.sass ? '' : '}'))
 export const cssAreaName = computed(() => props.area.name)
 
 function getGridTemplateAreas(grid) {
